@@ -17,6 +17,7 @@ before_install:
 - go get -t -v gopkg.in/mgo.v2
 - go get -t -v github.com/aws/aws-lambda-go/lambda
 - go get -t -v github.com/bestbug456/gorpropplus
+- go get -t -v github.com/bestbug456/dotateacher/workingqueue
 - go test -race
 script: 
   - make build
