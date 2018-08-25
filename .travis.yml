@@ -16,10 +16,8 @@ script:
 - go build
 deploy:
   provider: lambda
-  function_name: dotateacher
   region: eu-central-1
   runtime: go1.x
-  handler_name: dotateacher
   publish: true 
   zip: deploy.zip
   role: $ROLE
