@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	wq "workingqueue"
+	wq "github.com/bestbug456/dotateacher/workingqueue"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"gopkg.in/mgo.v2"
