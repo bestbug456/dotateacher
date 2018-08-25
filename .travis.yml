@@ -21,10 +21,12 @@ deploy:
   provider: lambda
   function_name: dotateacher
   region: eu-central-1
-  role: arn:aws:iam::0123456789012:role/lambda_basic_execution
   runtime: go1.x
   handler_name: handler
-  secret_access_key:
-    secure: npPh4HHrRad0e6IZ97KVyJQVROXxGa7MobEkTAvoEI4OEgpNVpPrsb46ENldeFhMKagXSdF8VSNRJrff4im2tU6Xb4sJYhZwwZy9T3+x+RisZ4sS4v+D7Np9x4C2W/Z52zZYMebRZ+X0r+jYK8fuIVfSdq3rU4pyw4xfNlqRYhB2xwfLsZaqr3PI/5jG/wdEf/yY66Jdhl1T4OyLfgVqm4ni7FQ6OcEW0YtB0fejwar8gfqbbiB3oSsIgU7iMNUQpVpubQ+2S2i4PzTbp3RFuwI13UsixusIziNy36RdfsCzfgzEclhN/SA+s8U57DWKajrd2HAt2JQfJ6NXJJVYrp0x2Fib20oxfwammT+lnBJZOPLMjA/aoaymeFt0QLoOybuLkY6eFIe0UDVLYTMFMuA+Cck10HrmZcJh+/4eWd+t7sNfp4oiY/U/SdKk7lMfkpipbf4aM+QiNsgCqjhejqjaknqxVSa2KJK0Dcy1klg8hKzlQoFkv00bJXULX4VzJR/AiTybC2RsJjnQ59PDTrmwsUl+S3LGwEw4+bvvMk3c5/37tcYRjUopHr6YAD32c4tBsPL0UYTVg1HtvzBs8HVVV+s8qChUaroMTnHZYPx5mJd2SOoMzP9FFIlaowZIh05ztu5tYsayxkXQyqtarfkNdY26rKQ1DnHgE3tzcVk=
-  access_key_id:
-    secure: VW3SlfqfxPVN4WPxvITr3as+Nb9OBbkJ+twzvos/2n/A/7tB1JrNBpw/4ZVe2ExzY0UFeiO2xNQ5+hooXjjRkDnkZIGJCwgAjE8sGgLGaLOdrWrxzfn1l9kYmy9gD2/mYDD6LDsom+hYSuqxC1Levm9B9ciakznTwfbMFv+p4HJANquFyapNBlDICZhNdXVqc5TSRaSIH0MAkpEQ9fmh6qY6QzTPDD8KbIGSuIU8Xf4qOBxN5+rezQ8PY0rjHskB8CnXW+KzD+AxP9zsR4b1ilof3P53uplu6Fl/ZhHWHZswD93j2Dv6kwBtHRei9xng1InzF/u0g0lTDku0Wh0gkOo+LAfcH6ZmtN1hWl+gNjkQPfo5F5jJdOqCqYw47vzY2FQ8mkGe5/hET90VWia/wp8BzwIY6Wk6id2oAOL1Il7DFwpBHhvjCk4VkmTy+lO05six/aD/CpBGADQV4r04perIhsby74ceG3DPeK1+APsh+zpwoESYpzstxDYH1spbpqrtVhw7GqrOQMmIkk/0DB1oaV8HYmHyIHBaQajhWu3ngXdX/+tphDDRD3aMmOXOauRKOR45nXbQvDV+/Rv0uKPQtg+wPsO00LRJharxkXxrsGlcZrW/Kmu5IH3XByyVjxwwZwW1rqUUnEITiM+0J20rQyTp50gD4MZeOYPdkk0=
+  publish: true 
+  zip: deploy.zip
+  role: $ROLE
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+before_deploy:
+   - zip -r deploy.zip dotateacher
