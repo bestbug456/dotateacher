@@ -2,9 +2,6 @@ language: go
 sudo: true
 go:
 - '1.10'
-env:
-  global:
-  - secure: PIZ9yNGcyu+5cmZV06G+FMfb4Nh0QfpyAQwSN2AgH2WzqUQq7/xtDXOJ1Zye8YHte+Lvb/S2MepMKVSERTc9QBbBhOZ5tln9EYGdZBnKyGTG6gzKwoFfUsscXj4yw6x5qGLjqTHygZzEqcV6ZaNC9xyBD7wNt4BQ+XW1MsGzzXXquKRu4KvxFb2rFKjfI2uaylejosm0JyIuWSXuONVHNn+XDz9hVXGOhhNZwSDwjU1OJum3OQmOuL5RpeHn8GtvUoRjf3l6zEKaPbmaclomTRQivhGx1o+7seRoyy6TTSAnytXkbQ2vZEOf7cnNwJni2iKDdDWXRyLMjxLzA4BFsxZIgrDJzH+JO1h3UNI+Qd8L/LeekJVrsl8run4D5Csx2cF4Wi+SUeCZy9cs3nzE3uNLfGiqK3ECOGh9uVN9XPTBDzvEVFw6o+9FrM2QCuoAqPnxJHxknwb0IXjfCO5Ay0Yp5xb9UPcW7Y+OuqnONytYma/qqRx0EbeFyERxfwibSncCXZS99ZXsI+5wRBRnPVwQexgwTQGKmgV0uYjwEbVd+GKRQDS+cxQd0AKgm8WKB/6Yms1Q+V4t3+uhTltTLCzF3BvRyfnmReFAm7P4TiWU8ayj0rpT3UVY+p/P/TVmj0KMZJ3JzONZeeUlOto+WIHTy6+P7Yw/EAY+HAk7OW4=
 branches:
   only:
   - master
