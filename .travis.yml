@@ -10,7 +10,7 @@ env:
 branches:
   only:
   - master
-go_import_path: github.com/bestbug456/dotateacher
+go_import_path: github.com/bestbug456/dotateacher/workingqueue
 before_install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
