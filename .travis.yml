@@ -13,7 +13,10 @@ branches:
 before_install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
-- go get -t -v ./...
+- go get -t -v gopkg.in/mgo.v2/bson
+- go get -t -v gopkg.in/mgo.v2
+- go get -t -v github.com/aws/aws-lambda-go/lambda
+- go get -t -v github.com/bestbug456/gorpropplus
 - go test -race
 script: 
   - make build
