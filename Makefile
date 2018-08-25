@@ -1,10 +1,11 @@
 .PHONY: build clean upload
 build:
-	npm install --only=production
-	zip -r code.zip . -x *.git*
+	go build
+	mv src dotateacher
+	zip -r dotateacher.zip dotateacher
 
 clean:
-	if [ -a code.zip ]; then rm code.zip; fi
+	if [ -a dotateacher.zip ]; then rm dotateacher.zip; fi
 
 upload: build
 	./upload.sh
