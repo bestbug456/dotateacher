@@ -4,19 +4,27 @@ go:
 - '1.10'
 env:
   global:
-  - AWS_DEFAULT_REGION=eu-central-1
   - secure: PIZ9yNGcyu+5cmZV06G+FMfb4Nh0QfpyAQwSN2AgH2WzqUQq7/xtDXOJ1Zye8YHte+Lvb/S2MepMKVSERTc9QBbBhOZ5tln9EYGdZBnKyGTG6gzKwoFfUsscXj4yw6x5qGLjqTHygZzEqcV6ZaNC9xyBD7wNt4BQ+XW1MsGzzXXquKRu4KvxFb2rFKjfI2uaylejosm0JyIuWSXuONVHNn+XDz9hVXGOhhNZwSDwjU1OJum3OQmOuL5RpeHn8GtvUoRjf3l6zEKaPbmaclomTRQivhGx1o+7seRoyy6TTSAnytXkbQ2vZEOf7cnNwJni2iKDdDWXRyLMjxLzA4BFsxZIgrDJzH+JO1h3UNI+Qd8L/LeekJVrsl8run4D5Csx2cF4Wi+SUeCZy9cs3nzE3uNLfGiqK3ECOGh9uVN9XPTBDzvEVFw6o+9FrM2QCuoAqPnxJHxknwb0IXjfCO5Ay0Yp5xb9UPcW7Y+OuqnONytYma/qqRx0EbeFyERxfwibSncCXZS99ZXsI+5wRBRnPVwQexgwTQGKmgV0uYjwEbVd+GKRQDS+cxQd0AKgm8WKB/6Yms1Q+V4t3+uhTltTLCzF3BvRyfnmReFAm7P4TiWU8ayj0rpT3UVY+p/P/TVmj0KMZJ3JzONZeeUlOto+WIHTy6+P7Yw/EAY+HAk7OW4=
 branches:
   only:
   - master
 before_install:
-- pip install --user awscli
-- export PATH=$PATH:$HOME/.local/bin
 - go get -t -v gopkg.in/mgo.v2/bson
 - go get -t -v gopkg.in/mgo.v2
 - go get -t -v github.com/aws/aws-lambda-go/lambda
 - go get -t -v github.com/bestbug456/gorpropplus
 - go get -t -v github.com/bestbug456/dotateacher/workingqueue
 - go test -race
-script: 
-  - make upload
+script:
+- go build
+deploy:
+  provider: lambda
+  function_name: dotateacher
+  region: eu-central-1
+  role: arn:aws:iam::0123456789012:role/lambda_basic_execution
+  runtime: go1.x
+  handler_name: handler
+  secret_access_key:
+    secure: Ob738Jzf1TPCz1fT/txijxFy+u6kkcLKSpVUvQWazzuCJeYBCslCcO1a0H/WWlGAbunuKOpdVqdDj9EBkgYdSzRdC51tmFj4rNnDK5dgKs7WUTzNb0vEEONGVn/mBy/pk1kmpjqTXtF0GuuO0gxSQf7HFLTxmEdXasauavEdjAA6/VrcW9DLqS4MY+3QkeqqlxIg1RtehtGqdK6icEhN5vjRGhqzVQfHhzW/b4andPV7y/tVa9s0SHrAxxa4tu8GTjz84cSo6n8/VfPyJ/5vD+ktVFazj5rIRBnOUJCzROP2csK+nf+Ay7qH3q55ZAZGRvWJDlCKyQ16hSupM7u4LMZyoWLvnMK/PBsy0s7g7INs98SjGmX+Kolp7jbImW+ZMVtOzmBhZhuj/lQcZtO6XcWYsVaRxITPKUIUnW9aVm5oKGNOVo5MeQ7jAbf6WFnH29Mv7Y4FNWV95xl4WeQSaZFNP+xXwZ9oUg+gdCUJ5zMpzoKk8K+P6OmEv2zbmTbaoajUFe/LBkdng/haSVEyTjEonuIghvcYNQb7RJP6WSTyeBiask4469N466MmsF1XfUFgoe2jzL4X/9NM3FFxn+tXL5eyL07sHQcp8S7t40yqENZM1BrMZEKaYLB/KCPufo1u/OiMbrTsc0w+4xZ2Soal+SoAngqKfgeHLUDz/rs=
+  access_key_id:
+    secure: Z6Z2vPXxziQMVbCY1+6yRv7PiCADacLpNN6mAr5BzmlaEDXfibKmRGlcwe7QPcT9W43Mh2NbMvMwRqBTnvRq41w0zkekhnbhtjgvCNVEa/M2W0CWmRIFOPiQscrYihJ/6R+Gq1MmPAMwuMjImzcTdWG7iX+BUwN+VPIG6JQ+W8AetWiCL2buLvD23mpYx/zkMWBmK0oyVguPn9Iqu/bXiSFRviNohRqlkSvvwcoPGOniTjFVJZgoVWMGE1QdEMjtHZBNDQgtWCljcFYL1IAr+UMCqZk82JLwZN6wrMURWCryy2vRWrI/cZOm7ElpKF/KImtwrkiLEzXPcX5OaOCvr55teFdooYmtfFp1fVc6JByoR8ygRG4AMqdEaMJt/3OFgi0pEykpztQm7YvbCzG9ttZ4bo5oMrlHSXL+SOfe10hv/b/2yb7A1XVDbHr1R65+YGShfRBBpnUmhJVPbaDPNTmPeWdGrblssJb9ZeErHiLOE9H94FQhp1w1OhrPnclKjOnbipqeYJjIAmaVWKqNql6IyWg9DaMLz4e7JUTGs4RMiqUHq4u2Yfxhx1s5IhvwKqkeACOgCu64e1BfJ9OK+JGgUrEDo+JpY5pNwQ5IKQEyzxa5THLIhK0Vg9qEHEyPHaxDcCL+qTfaX2jApexvTTgUeT7qNW+z4xBTSY7DVd0=
