@@ -1,7 +1,6 @@
 .PHONY: build clean upload
 build:
 	go build
-	mv src dotateacher
 	zip -r dotateacher.zip dotateacher
 
 clean:
