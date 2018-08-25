@@ -1,0 +1,16 @@
+language: go
+go:
+ - '1.9'
+ - '1.10'
+env:
+  global:
+  - AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+  - AWS_DEFAULT_REGION=eu-central-1
+branches:
+  only:
+  - master
+before_install:
+ - pip install --user awscli
+ - export PATH=$PATH:$HOME/.local/bin
+ - go get -t -v ./...
+script: make build
