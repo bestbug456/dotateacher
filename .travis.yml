@@ -20,6 +20,7 @@ deploy:
   region: eu-central-1
   runtime: go1.x
   handler_name: dotateacher
+  function_name: dotateacher
   publish: true 
   zip: deploy.zip
   role: $ROLE
