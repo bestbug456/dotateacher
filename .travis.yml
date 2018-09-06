@@ -23,6 +23,7 @@ deploy:
   function_name: dotateacher
   publish: true 
   zip: deploy.zip
+  timeout: 300
   role: $ROLE
   access_key_id: $AWS_ACCESS_KEY_ID
   secret_access_key: $AWS_SECRET_ACCESS_KEY
