@@ -17,7 +17,7 @@ script:
 deploy:
   provider: lambda
   module_name: ./
-  handler_name: /dotateacher
+  handler_name: dotateacher
   region: eu-central-1
   runtime: go1.x
   function_name: dotateacher
