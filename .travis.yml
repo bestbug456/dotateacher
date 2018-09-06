@@ -16,6 +16,7 @@ script:
 - go build
 deploy:
   provider: lambda
+  # Weird tweak to get a valid path to root-level executable.  AWS joins module_name & handler_name with a '.'
   module_name: "./"
   handler_name: /dotateacher
   region: eu-central-1
@@ -24,6 +25,7 @@ deploy:
   publish: true 
   zip: deploy.zip
   timeout: 300
+  memory_size: 512
   role: $ROLE
   access_key_id: $AWS_ACCESS_KEY_ID
   secret_access_key: $AWS_SECRET_ACCESS_KEY
