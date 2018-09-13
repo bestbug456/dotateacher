@@ -8,7 +8,7 @@ import (
 	rprop "github.com/bestbug456/gorpropplus"
 )
 
-func createNewNeuralNetworkAndValidate(args interface{}) error {
+func CreateNewNeuralNetworkAndValidate(args interface{}) error {
 
 	infos := args.(*JobArgs)
 	NN, err := trainNewNeuralNetwork(infos.TrainData, infos.NeuronNumber)

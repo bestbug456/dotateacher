@@ -85,7 +85,7 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 
 		responseChan := make(chan NNmessage, 0)
 		for i := 0; i < JOBNUMBER; i++ {
-			wq.SendJob(createNewNeuralNetworkAndValidate, &JobArgs{
+			wq.SendJob(CreateNewNeuralNetworkAndValidate, &JobArgs{
 				TrainData:    traindata,
 				TestData:     testdata,
 				NeuronNumber: i,
@@ -97,15 +97,19 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 		var bestResult NNmessage
 		for i := 0; i < JOBNUMBER; i++ {
 			result := <-responseChan
-			if result.MatrixQA[0] > max {
+			if result.MatrixQA[0] > max || max == 0 {
 				max = result.MatrixQA[0]
 				bestResult = result
 			}
-
 		}
+
 		// If the new weights have at least 70% of accuracy
 		// OR is better then the actual save it to the database
-		if float64(bestResult.MatrixQA[0])/float64(len(testdata)) > 0.7 || float64(bestResult.MatrixQA[0])/float64(len(testdata)) > float64(QAresults[0])/float64(len(testdata)) {
+		if len(bestResult.MatrixQA) == 0 {
+			return "", fmt.Errorf("MatrixQA have zero len (%+v)", bestResult)
+		}
+		if float64(bestResult.MatrixQA[0])/float64(len(testdata)) > 0.7 ||
+			float64(bestResult.MatrixQA[0])/float64(len(testdata)) < float64(QAresults[0])/float64(len(testdata)) {
 			err = storeNewNeuralNetworkAndQAResults(bestResult, s)
 			if err != nil {
 				return "", fmt.Errorf("Error while storing actual weights: %s\n", err.Error())
