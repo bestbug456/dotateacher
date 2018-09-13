@@ -64,7 +64,7 @@ func getDatasetAndTrainSet(s *mgo.Session) ([]MatchInfos, []MatchInfos, error) {
 	traindata1 := results1[0 : len(results1)/2]
 
 	testdata := results0[len(traindata) : len(results0)-1]
-	testdata1 := results1[len(traindata) : len(results1)-1]
+	testdata1 := results1[len(traindata1) : len(results1)-1]
 
 	traindata = append(traindata, traindata1...)
 	testdata = append(testdata, testdata1...)
