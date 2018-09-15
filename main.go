@@ -109,7 +109,7 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 			return "", fmt.Errorf("MatrixQA have zero len (%+v)", bestResult)
 		}
 		if float64(bestResult.MatrixQA[0])/float64(len(testdata)) > 0.7 ||
-			float64(bestResult.MatrixQA[0])/float64(len(testdata)) < float64(QAresults[0])/float64(len(testdata)) {
+			float64(bestResult.MatrixQA[0])/float64(len(testdata)) > float64(QAresults[0])/float64(len(testdata)) {
 			err = storeNewNeuralNetworkAndQAResults(bestResult, s)
 			if err != nil {
 				return "", fmt.Errorf("Error while storing actual weights: %s\n", err.Error())
