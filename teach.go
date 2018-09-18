@@ -107,7 +107,7 @@ func checkWeightsQuality(NN *rprop.NeuralNetwork, input []MatchInfos) *rprop.Val
 	}
 	ris, err := NN.Validate(inputData, outputData)
 	if err != nil {
-		log.Printf("Error: %s", err.Error)
+		log.Printf("Error: %s", err.Error())
 	}
 
 	return ris
