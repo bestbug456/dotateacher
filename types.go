@@ -18,7 +18,7 @@ type JobArgs struct {
 }
 
 type NNmessage struct {
-	MatrixQA []int
+	MatrixQA *rprop.ValidationResult
 	NN       *rprop.NeuralNetwork
 }
 

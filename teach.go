@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 
 	rprop "github.com/bestbug456/gorpropplus"
 )
@@ -49,8 +48,17 @@ func orderPickByTeamAndCreateBitmask(picks []int) []float64 {
 }
 
 func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNetwork, error) {
+	var hiddenLayer []int
+	if neuron > 125 {
+		hiddenLayer = make([]int, 2)
+		hiddenLayer[0] = 125
+		hiddenLayer[1] = neuron - 125
+	} else {
+		hiddenLayer = make([]int, 1)
+		hiddenLayer[0] = neuron
+	}
 	args := rprop.NeuralNetworkArguments{
-		HiddenLayer:        []int{neuron},
+		HiddenLayer:        hiddenLayer,
 		InputSize:          230,
 		OutputSize:         1,
 		Threshold:          0.001,
@@ -86,21 +94,23 @@ func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNet
 	return NN, nil
 }
 
-func checkWeightsQuality(NN *rprop.NeuralNetwork, input []MatchInfos) []int {
-	resultMatrix := make([]int, 2)
+func checkWeightsQuality(NN *rprop.NeuralNetwork, input []MatchInfos) *rprop.ValidationResult {
+	inputData := make([][]float64, len(input))
+	outputData := make([][]float64, len(input))
 	for i := 0; i < len(input); i++ {
-		testset := orderPickByTeamAndCreateBitmask(input[i].Picks)
-		out, err := NN.Predict(testset)
-		if err != nil {
-			log.Printf("Error while predicting: %s", err.Error())
+		inputData[i] = make([]float64, len(input[i].Picks))
+		for j := 0; j < len(input[i].Picks); j++ {
+			inputData[i][j] = float64(input[i].Picks[j])
 		}
-		if int(out[0]) == input[i].Win && math.Abs(out[0]-float64(input[i].Win)) < 0.15 {
-			resultMatrix[0]++
-		} else {
-			resultMatrix[1]++
-		}
+		outputData[i] = make([]float64, 1)
+		outputData[i][0] = float64(input[i].Win)
 	}
-	return resultMatrix
+	ris, err := NN.Validate(inputData, outputData)
+	if err != nil {
+		log.Printf("Error: %s", err.Error)
+	}
+
+	return ris
 }
 
 func createBitmasksForTeam(team []int) []float64 {

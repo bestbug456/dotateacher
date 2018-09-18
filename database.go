@@ -100,9 +100,7 @@ func storeNewNeuralNetworkAndQAResults(msg NNmessage, s *mgo.Session) error {
 		}
 	}
 
-	err = s.DB("neuralnetwork").C("score").Insert(NNStats{
-		MatrixQA: msg.MatrixQA,
-	})
+	err = s.DB("neuralnetwork").C("score").Insert(msg.MatrixQA)
 	if err != nil {
 		return err
 	}
