@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	wq "github.com/bestbug456/dotateacher/workingqueue"
 
@@ -13,7 +14,7 @@ import (
 
 var compressed map[int]int
 
-const (
+var (
 	JOBNUMBER = 100
 )
 
@@ -35,6 +36,14 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 	password := os.Getenv("password")
 	option := os.Getenv("option")
 	ssl := os.Getenv("ssl")
+	jobsNumber := os.Getenv("nrjobs")
+	if jobsNumber != "" {
+		var err error
+		JOBNUMBER, err = strconv.Atoi(jobsNumber)
+		if err != nil {
+			return "", fmt.Errorf("Error while converting jobsNumber: %s", err.Error())
+		}
+	}
 
 	var s *mgo.Session
 	var err error
