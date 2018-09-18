@@ -14,7 +14,7 @@ import (
 var compressed map[int]int
 
 const (
-	JOBNUMBER = 200
+	JOBNUMBER = 100
 )
 
 func init() {
@@ -74,11 +74,11 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 	}
 
 	// Check how many correct prediction we have
-	QAresults := checkWeightsQuality(NN, testdata)
+	storedNNResult := checkWeightsQuality(NN, testdata)
 
 	// If we didn't have at least 70% of accuracy
 	// try to find a better weights.
-	if float64(QAresults.CorrectPrediction)/float64(len(testdata)) < 0.7 {
+	if float64(storedNNResult.CorrectPrediction)/float64(len(testdata)) < 0.7 {
 
 		wq := wq.NewWorkingQueue(50, 200, nil)
 		wq.Run()
@@ -108,7 +108,7 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 		if bestResult.MatrixQA.CorrectPrediction == 0 {
 			return "", fmt.Errorf("MatrixQA have zero len (%+v)", bestResult)
 		}
-		if float64(bestResult.MatrixQA.CorrectPrediction)/float64(len(testdata)) > float64(QAresults.CorrectPrediction)/float64(len(testdata)) {
+		if float64(bestResult.MatrixQA.CorrectPrediction)/float64(len(testdata)) > float64(storedNNResult.CorrectPrediction)/float64(len(testdata)) {
 			err = storeNewNeuralNetworkAndQAResults(bestResult, s)
 			if err != nil {
 				return "", fmt.Errorf("Error while storing actual weights: %s", err.Error())
@@ -116,7 +116,7 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 		}
 		// We just created the new NN, store it to the database
 		if created {
-			if float64(bestResult.MatrixQA.CorrectPrediction)/float64(len(testdata)) > float64(QAresults.CorrectPrediction)/float64(len(testdata)) {
+			if float64(bestResult.MatrixQA.CorrectPrediction)/float64(len(testdata)) > float64(storedNNResult.CorrectPrediction)/float64(len(testdata)) {
 				err = storeNewNeuralNetworkAndQAResults(bestResult, s)
 				if err != nil {
 					return "", fmt.Errorf("Error while storing actual weights: %s", err.Error())
@@ -124,7 +124,7 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 			} else {
 				err = storeNewNeuralNetworkAndQAResults(NNmessage{
 					NN:       NN,
-					MatrixQA: QAresults,
+					MatrixQA: storedNNResult,
 				}, s)
 				if err != nil {
 					return "", fmt.Errorf("Error while storing actual weights: %s", err.Error())

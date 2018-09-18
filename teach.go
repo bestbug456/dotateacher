@@ -49,6 +49,7 @@ func orderPickByTeamAndCreateBitmask(picks []int) []float64 {
 
 func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNetwork, error) {
 	var hiddenLayer []int
+	neuron += 100
 	if neuron > 125 {
 		hiddenLayer = make([]int, 2)
 		hiddenLayer[0] = 125
