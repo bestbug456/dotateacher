@@ -60,14 +60,30 @@ func getDatasetAndTrainSet(s *mgo.Session) ([]MatchInfos, []MatchInfos, error) {
 		return nil, nil, err
 	}
 
-	traindata := results0[0 : len(results0)/2]
-	traindata1 := results1[0 : len(results1)/2]
+	var nrElements int
+	if len(results0) < len(results1) {
+		nrElements = len(results0) / 2
+	} else {
+		nrElements = len(results1) / 2
+	}
+	traindata := make([]MatchInfos, nrElements*2)
 
-	testdata := results0[len(traindata) : len(results0)-1]
-	testdata1 := results1[len(traindata1) : len(results1)-1]
+	for i := 0; i < len(traindata); i += 2 {
+		traindata[i] = results0[i]
+		traindata[i+1] = results1[i]
+	}
 
-	traindata = append(traindata, traindata1...)
-	testdata = append(testdata, testdata1...)
+	testdata := make([]MatchInfos, len(results0)+len(results1)-nrElements*2)
+	var j int
+	for i := nrElements; i < len(results0); i++ {
+		testdata[j] = results0[i]
+		j++
+	}
+	for i := nrElements; i < len(results1); i++ {
+		testdata[j] = results1[i]
+		j++
+	}
+
 	return traindata, testdata, nil
 }
 
