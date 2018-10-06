@@ -1,0 +1,3 @@
+#Dotateacher
+
+Dotateacher is a microservice created for training our various machine learning algorithm. This microservice is part of a larger project codenamed machineDota. This microservice is written in Go (Golang) mainly because this language is, in my opinion, a must choice if you want to have a high-performance system. In fact, this microservice at the moment does more than 2400 training per day using the AWS lambda function system! 
