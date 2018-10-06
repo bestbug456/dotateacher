@@ -26,10 +26,15 @@ func init() {
 }
 
 func main() {
+	trainAndValidateNN()
 	lambda.Start(HandleRequest)
 }
 
 func HandleRequest(ctx context.Context, data interface{}) (string, error) {
+	return trainAndValidateNN()
+}
+
+func trainAndValidateNN() (string, error) {
 
 	address := os.Getenv("address")
 	username := os.Getenv("username")
@@ -85,9 +90,11 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 	// Check how many correct prediction we have
 	storedNNResult := checkWeightsQuality(NN, testdata)
 
+	accuracy, sensitivity := getStastFromMatrixQA(storedNNResult)
+
 	// If we didn't have at least 70% of accuracy
 	// try to find a better weights.
-	if float64(storedNNResult.CorrectPrediction)/float64(len(testdata)) < 0.7 {
+	if accuracy < 0.8 || sensitivity < 0.8 {
 
 		wq := wq.NewWorkingQueue(50, 200, nil)
 		wq.Run()
@@ -102,22 +109,34 @@ func HandleRequest(ctx context.Context, data interface{}) (string, error) {
 			})
 		}
 
-		var max int
+		var bestaccuracy float64
+		var bestsensitivity float64
 		var bestResult NNmessage
 		for i := 0; i < JOBNUMBER; i++ {
 			result := <-responseChan
-			if result.MatrixQA.CorrectPrediction > max || max == 0 {
-				max = result.MatrixQA.CorrectPrediction
+			// Ignore invalid matrix
+			if result.MatrixQA == nil ||
+				result.MatrixQA.ConfusionMatrix == nil ||
+				len(result.MatrixQA.ConfusionMatrix) != 2 ||
+				len(result.MatrixQA.ConfusionMatrix[0]) != 2 ||
+				len(result.MatrixQA.ConfusionMatrix[1]) != 2 {
+				continue
+			}
+			resultaccuracy, resultsensitivity := getStastFromMatrixQA(result.MatrixQA)
+			if resultaccuracy >= bestaccuracy && resultsensitivity >= bestsensitivity {
+				bestaccuracy = resultaccuracy
+				bestsensitivity = resultsensitivity
 				bestResult = result
 			}
 		}
 
 		// If the new weights have at least 70% of accuracy
 		// OR is better then the actual save it to the database
-		if bestResult.MatrixQA.CorrectPrediction == 0 {
-			return "", fmt.Errorf("MatrixQA have zero len (%+v)", bestResult)
+		if bestResult.MatrixQA == nil {
+			return "", fmt.Errorf("MatrixQA have zero len (%+v)", bestResult.MatrixQA)
 		}
-		if float64(bestResult.MatrixQA.CorrectPrediction)/float64(len(testdata)) > float64(storedNNResult.CorrectPrediction)/float64(len(testdata)) {
+
+		if bestaccuracy >= accuracy && bestsensitivity >= sensitivity {
 			err = storeNewNeuralNetworkAndQAResults(bestResult, s)
 			if err != nil {
 				return "", fmt.Errorf("Error while storing actual weights: %s", err.Error())

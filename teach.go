@@ -49,15 +49,17 @@ func orderPickByTeamAndCreateBitmask(picks []int) []float64 {
 
 func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNetwork, error) {
 	var hiddenLayer []int
-	neuron += 100
-	if neuron > 125 {
-		hiddenLayer = make([]int, 2)
-		hiddenLayer[0] = 125
-		hiddenLayer[1] = neuron - 125
-	} else {
-		hiddenLayer = make([]int, 1)
-		hiddenLayer[0] = neuron
-	}
+	// neuron += 100
+	// if neuron > 125 {
+	// 	hiddenLayer = make([]int, 2)
+	// 	hiddenLayer[0] = 125
+	// 	hiddenLayer[1] = neuron - 125
+	// } else {
+	// 	hiddenLayer = make([]int, 1)
+	// 	hiddenLayer[0] = neuron
+	// }
+	hiddenLayer = make([]int, 1)
+	hiddenLayer[0] = neuron
 	args := rprop.NeuralNetworkArguments{
 		HiddenLayer:        hiddenLayer,
 		InputSize:          230,
@@ -87,7 +89,6 @@ func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNet
 		outputData[i] = make([]float64, 1)
 		outputData[i] = []float64{float64(traindata[i].Win)}
 	}
-
 	err = NN.Train(inputData, outputData)
 	if err != nil {
 		return nil, fmt.Errorf("Error while training the neural network: %s", err.Error())
@@ -95,17 +96,22 @@ func trainNewNeuralNetwork(traindata []MatchInfos, neuron int) (*rprop.NeuralNet
 	return NN, nil
 }
 
-func checkWeightsQuality(NN *rprop.NeuralNetwork, input []MatchInfos) *rprop.ValidationResult {
-	inputData := make([][]float64, len(input))
-	outputData := make([][]float64, len(input))
-	for i := 0; i < len(input); i++ {
-		inputData[i] = make([]float64, len(input[i].Picks))
-		for j := 0; j < len(input[i].Picks); j++ {
-			inputData[i][j] = float64(input[i].Picks[j])
-		}
+func getStastFromMatrixQA(info *rprop.ValidationResult) (float64, float64) {
+	return float64(info.ConfusionMatrix[0][0]) / float64(info.ConfusionMatrix[0][0]+info.ConfusionMatrix[1][0]),
+		float64(info.ConfusionMatrix[1][1]) / float64(info.ConfusionMatrix[1][1]+info.ConfusionMatrix[0][1])
+}
+
+func checkWeightsQuality(NN *rprop.NeuralNetwork, testdata []MatchInfos) *rprop.ValidationResult {
+	inputData := make([][]float64, len(testdata))
+	outputData := make([][]float64, len(testdata))
+
+	for i := 0; i < len(testdata); i++ {
+		inputData[i] = orderPickByTeamAndCreateBitmask(testdata[i].Picks)
 		outputData[i] = make([]float64, 1)
-		outputData[i][0] = float64(input[i].Win)
+		outputData[i] = []float64{float64(testdata[i].Win)}
 	}
+
+	NN.Threshold = 0.15
 	ris, err := NN.Validate(inputData, outputData)
 	if err != nil {
 		log.Printf("Error: %s", err.Error())
